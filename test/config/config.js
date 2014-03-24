@@ -1,3 +1,5 @@
+var _ = require('lodash')
+
 module.exports = {
   username: process.env.SEQ_USER || "root",
   password: process.env.SEQ_PW   || null,
@@ -11,6 +13,22 @@ module.exports = {
   rand: function() {
     return parseInt(Math.random() * 999, 10)
   },
+
+  mssql: (function() {
+    var pool = {
+      maxConnections: process.env.SEQ_MSSQL_POOL_MAX  || process.env.SEQ_POOL_MAX  || 5,
+      maxIdleTime:    process.env.SEQ_MSSQL_POOL_IDLE || process.env.SEQ_POOL_IDLE || 3000
+    }
+
+    var connections = [{
+      database: 'sequelize-1',
+      username: 'sequelize-1_SQLLogin_1',
+      password: 'b8boff23zo',
+      host:     'sequelize-1.mssql.somee.com'
+    }]
+
+    return _.extend({ pool: pool, port: 1433 }, _.sample(connections))
+  })(),
 
   //make maxIdleTime small so that tests exit promptly
   mysql: {
